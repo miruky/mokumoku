@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="mokumokuのロゴ">
+  <title>mokumoku</title>
+  <style>
+    .stroke { stroke: #b8441f; }
+    @media (prefers-color-scheme: dark) {
+      .stroke { stroke: #e8703f; }
+    }
+  </style>
+  <path class="stroke" d="M9 22a5.5 5.5 0 0 1-1.2-10.9A7.5 7.5 0 0 1 22.4 9.6 6 6 0 0 1 23 21.5" fill="none" stroke-width="2" stroke-linecap="round"/>
+  <circle class="stroke" cx="16" cy="22" r="5" fill="none" stroke-width="2"/>
+  <path class="stroke" d="M16 19.5V22l1.8 1.4" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
