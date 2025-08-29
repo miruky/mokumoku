@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" role="img" aria-label="mokumokuのアーキテクチャ図">
+  <title>mokumokuのアーキテクチャ。app.tsがUIを束ね、timer.tsの状態機械とsessions.tsの台帳を駆動し、report.tsが日報Markdownを生成する。</title>
+  <style>
+    text {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', 'Segoe UI', system-ui, sans-serif;
+      fill: #1f1d1a;
+    }
+    .box { fill: #ffffff; stroke: #c9c3bb; stroke-width: 1.5; rx: 12; }
+    .box-accent { fill: #fdf1ec; stroke: #b8441f; }
+    .box-store { fill: #f4f2ef; stroke: #c9c3bb; stroke-dasharray: 6 4; }
+    .name { font-size: 16px; font-weight: 700; }
+    .desc { font-size: 12.5px; fill: #6b6660; }
+    .edge { stroke: #8d877e; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+    .edge-label { font-size: 12px; fill: #6b6660; }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #ece9e4; }
+      .box { fill: #1f1d1a; stroke: #4a443b; }
+      .box-accent { fill: #2b1a12; stroke: #e8703f; }
+      .box-store { fill: #232019; stroke: #4a443b; }
+      .desc, .edge-label { fill: #a39d94; }
+      .edge { stroke: #7a746a; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8d877e"/>
+    </marker>
+  </defs>
+
+  <rect class="box box-accent" x="310" y="32" width="300" height="92" rx="12"/>
+  <text class="name" x="460" y="70" text-anchor="middle">app.ts</text>
+  <text class="desc" x="460" y="94" text-anchor="middle">UI。ダイヤル描画・操作・日報ダイアログ</text>
+
+  <rect class="box" x="40" y="220" width="240" height="92" rx="12"/>
+  <text class="name" x="160" y="258" text-anchor="middle">timer.ts</text>
+  <text class="desc" x="160" y="282" text-anchor="middle">ポモドーロ状態機械(純粋関数)</text>
+
+  <rect class="box" x="340" y="220" width="240" height="92" rx="12"/>
+  <text class="name" x="460" y="258" text-anchor="middle">sessions.ts</text>
+  <text class="desc" x="460" y="282" text-anchor="middle">集中セッションの台帳。検証・集計</text>
+
+  <rect class="box" x="640" y="220" width="240" height="92" rx="12"/>
+  <text class="name" x="760" y="258" text-anchor="middle">report.ts</text>
+  <text class="desc" x="760" y="282" text-anchor="middle">1日分から日報Markdownを生成</text>
+
+  <rect class="box box-store" x="340" y="360" width="240" height="56" rx="12"/>
+  <text class="name" x="460" y="394" text-anchor="middle" font-size="14">localStorage</text>
+
+  <path class="edge" d="M345 95 C 230 120 175 160 162 212"/>
+  <text class="edge-label" x="212" y="148" text-anchor="middle">start / pause / tick</text>
+
+  <path class="edge" d="M460 124 L460 212"/>
+  <text class="edge-label" x="540" y="170" text-anchor="middle">満了した集中を記録</text>
+
+  <path class="edge" d="M575 95 C 690 120 745 160 758 212"/>
+  <text class="edge-label" x="730" y="148" text-anchor="middle">今日の分を渡す</text>
+
+  <path class="edge" d="M460 312 L460 352"/>
+  <text class="edge-label" x="475" y="338">保存・復元</text>
+</svg>
