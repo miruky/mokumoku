@@ -21,6 +21,7 @@ const config: TimerConfig = {
   shortBreakMin: 5,
   longBreakMin: 15,
   cyclesUntilLongBreak: 4,
+  dailyGoal: 8,
 };
 
 const T0 = Date.UTC(2026, 0, 5, 9, 0, 0);
@@ -159,6 +160,9 @@ describe('isValidConfig', () => {
     expect(isValidConfig({ ...DEFAULT_CONFIG, shortBreakMin: 1.5 })).toBe(false);
     expect(isValidConfig({ ...DEFAULT_CONFIG, longBreakMin: 121 })).toBe(false);
     expect(isValidConfig({ ...DEFAULT_CONFIG, cyclesUntilLongBreak: 0 })).toBe(false);
+    expect(isValidConfig({ ...DEFAULT_CONFIG, dailyGoal: 0 })).toBe(false);
+    expect(isValidConfig({ ...DEFAULT_CONFIG, dailyGoal: 25 })).toBe(false);
+    expect(isValidConfig({ ...DEFAULT_CONFIG, dailyGoal: 2.5 })).toBe(false);
   });
 });
 
