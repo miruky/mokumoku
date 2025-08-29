@@ -1,23 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" role="img" aria-label="mokumokuのアーキテクチャ図">
-  <title>mokumokuのアーキテクチャ。app.tsがUIを束ね、timer.tsの状態機械とsessions.tsの台帳を駆動し、report.tsが日報Markdownを生成する。</title>
+  <title>mokumokuのアーキテクチャ。app.tsがUIを束ね、timer.tsの状態機械とsessions.tsの台帳を駆動し、report.tsが日報Markdownを生成する。goal.tsとshortcuts.tsは表示を補助する。</title>
   <style>
     text {
       font-family: 'Hiragino Sans', 'Noto Sans JP', 'Segoe UI', system-ui, sans-serif;
-      fill: #1f1d1a;
+      fill: #211e19;
     }
-    .box { fill: #ffffff; stroke: #c9c3bb; stroke-width: 1.5; rx: 12; }
-    .box-accent { fill: #fdf1ec; stroke: #b8441f; }
-    .box-store { fill: #f4f2ef; stroke: #c9c3bb; stroke-dasharray: 6 4; }
+    .box { fill: #f5f2ec; stroke: #cfc7b8; stroke-width: 1.5; }
+    .box-accent { fill: #f7ece4; stroke: #ad3f1c; }
+    .box-store { fill: #efeae1; stroke: #cfc7b8; stroke-dasharray: 6 4; }
+    .box-aux { fill: #efeae1; stroke: #cfc7b8; }
     .name { font-size: 16px; font-weight: 700; }
-    .desc { font-size: 12.5px; fill: #6b6660; }
+    .desc { font-size: 12.5px; fill: #6c665c; }
     .edge { stroke: #8d877e; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
-    .edge-label { font-size: 12px; fill: #6b6660; }
+    .edge-label { font-size: 12px; fill: #6c665c; }
     @media (prefers-color-scheme: dark) {
-      text { fill: #ece9e4; }
-      .box { fill: #1f1d1a; stroke: #4a443b; }
+      text { fill: #ece7dd; }
+      .box { fill: #1d1a15; stroke: #3c372d; }
       .box-accent { fill: #2b1a12; stroke: #e8703f; }
-      .box-store { fill: #232019; stroke: #4a443b; }
-      .desc, .edge-label { fill: #a39d94; }
+      .box-store, .box-aux { fill: #211e18; stroke: #3c372d; }
+      .desc, .edge-label { fill: #9d968a; }
       .edge { stroke: #7a746a; }
     }
   </style>
@@ -27,24 +28,31 @@
     </marker>
   </defs>
 
-  <rect class="box box-accent" x="310" y="32" width="300" height="92" rx="12"/>
+  <rect class="box box-aux" x="40" y="40" width="232" height="68" rx="10"/>
+  <text class="name" x="156" y="72" text-anchor="middle" font-size="14">goal.ts / shortcuts.ts</text>
+  <text class="desc" x="156" y="92" text-anchor="middle">目標の算出・ショートカット解決</text>
+
+  <rect class="box box-accent" x="310" y="32" width="300" height="92" rx="10"/>
   <text class="name" x="460" y="70" text-anchor="middle">app.ts</text>
   <text class="desc" x="460" y="94" text-anchor="middle">UI。ダイヤル描画・操作・日報ダイアログ</text>
 
-  <rect class="box" x="40" y="220" width="240" height="92" rx="12"/>
+  <rect class="box" x="40" y="220" width="240" height="92" rx="10"/>
   <text class="name" x="160" y="258" text-anchor="middle">timer.ts</text>
   <text class="desc" x="160" y="282" text-anchor="middle">ポモドーロ状態機械(純粋関数)</text>
 
-  <rect class="box" x="340" y="220" width="240" height="92" rx="12"/>
+  <rect class="box" x="340" y="220" width="240" height="92" rx="10"/>
   <text class="name" x="460" y="258" text-anchor="middle">sessions.ts</text>
   <text class="desc" x="460" y="282" text-anchor="middle">集中セッションの台帳。検証・集計</text>
 
-  <rect class="box" x="640" y="220" width="240" height="92" rx="12"/>
+  <rect class="box" x="640" y="220" width="240" height="92" rx="10"/>
   <text class="name" x="760" y="258" text-anchor="middle">report.ts</text>
   <text class="desc" x="760" y="282" text-anchor="middle">1日分から日報Markdownを生成</text>
 
-  <rect class="box box-store" x="340" y="360" width="240" height="56" rx="12"/>
+  <rect class="box box-store" x="340" y="360" width="240" height="56" rx="10"/>
   <text class="name" x="460" y="394" text-anchor="middle" font-size="14">localStorage</text>
+
+  <path class="edge" d="M310 78 L276 75"/>
+  <text class="edge-label" x="292" y="60" text-anchor="middle">表示を補助</text>
 
   <path class="edge" d="M345 95 C 230 120 175 160 162 212"/>
   <text class="edge-label" x="212" y="148" text-anchor="middle">start / pause / tick</text>
