@@ -13,6 +13,8 @@ export interface TimerConfig {
   longBreakMin: number;
   /** 何本の集中ごとに長休憩を入れるか */
   cyclesUntilLongBreak: number;
+  /** 1日に積みたい集中の本数。ログの目標メーターに使う */
+  dailyGoal: number;
 }
 
 export const DEFAULT_CONFIG: TimerConfig = {
@@ -20,6 +22,7 @@ export const DEFAULT_CONFIG: TimerConfig = {
   shortBreakMin: 5,
   longBreakMin: 15,
   cyclesUntilLongBreak: 4,
+  dailyGoal: 8,
 };
 
 export interface TimerState {
@@ -164,6 +167,9 @@ export function isValidConfig(c: TimerConfig): boolean {
     c.longBreakMin >= 1 &&
     c.longBreakMin <= 120 &&
     c.cyclesUntilLongBreak >= 1 &&
-    c.cyclesUntilLongBreak <= 12
+    c.cyclesUntilLongBreak <= 12 &&
+    Number.isInteger(c.dailyGoal) &&
+    c.dailyGoal >= 1 &&
+    c.dailyGoal <= 24
   );
 }
