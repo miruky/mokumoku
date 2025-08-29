@@ -6,6 +6,7 @@ import {
   deserializeSessions,
   durationMs,
   localDateKey,
+  removeSession,
   serializeSessions,
   sessionsOn,
   summarizeByTask,
@@ -93,6 +94,20 @@ describe('durationMs / totalMs', () => {
     const s = session('a', 0, 25);
     expect(durationMs(s)).toBe(25 * MIN);
     expect(totalMs([s, session('b', 30, 5)])).toBe(30 * MIN);
+  });
+});
+
+describe('removeSession', () => {
+  it('開始時刻が一致する1件を取り除く', () => {
+    const a = session('a', 0, 25);
+    const b = session('b', 30, 25);
+    const c = session('c', 60, 25);
+    expect(removeSession([a, b, c], b.startedAt)).toEqual([a, c]);
+  });
+
+  it('一致がなければ元の配列をそのまま返す', () => {
+    const a = session('a', 0, 25);
+    expect(removeSession([a], a.startedAt + 1)).toEqual([a]);
   });
 });
 
