@@ -104,6 +104,16 @@ export function totalMs(sessions: Session[]): number {
   return sessions.reduce((acc, s) => acc + durationMs(s), 0);
 }
 
+/**
+ * 開始時刻で1件を取り除く。誤って記録した中断などを消すために使う。
+ * 同時刻の重複は実際には起きないが、念のため最初の一致だけを消す。
+ */
+export function removeSession(sessions: Session[], startedAt: number): Session[] {
+  const i = sessions.findIndex((s) => s.startedAt === startedAt);
+  if (i === -1) return sessions;
+  return [...sessions.slice(0, i), ...sessions.slice(i + 1)];
+}
+
 export interface SessionStore {
   load(): Session[];
   save(sessions: Session[]): void;
