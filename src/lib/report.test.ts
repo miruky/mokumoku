@@ -72,6 +72,15 @@ describe('buildDailyReport', () => {
     expect(md).toContain('集中 2本(うち中断 1本)');
     expect(md).toContain('- 09:30-09:40 調査 ※中断');
   });
+
+  it('フッターを渡すと末尾に区切りつきで添える', () => {
+    const note = '直近7日: 集中 12本 / 連続達成 3日';
+    const withSessions = buildDailyReport('2026-06-12', [createSession('A', NINE, NINE + 25 * MIN)], note);
+    expect(withSessions).toContain('---');
+    expect(withSessions.trimEnd().endsWith(note)).toBe(true);
+    // セッションが無い日でもフッターは付く
+    expect(buildDailyReport('2026-06-12', [], note)).toContain(note);
+  });
 });
 
 describe('reportFilename', () => {

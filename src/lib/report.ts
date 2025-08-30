@@ -31,39 +31,42 @@ export function formatDateHeading(dateKey: string): string {
 /**
  * 日報をMarkdownで生成する。
  * セッションは同一日のものを時系列で渡すこと(sessionsOnの出力をそのまま使う)。
+ * footerNoteを渡すと、末尾に区切りつきで添える(直近7日の集計など)。
  */
-export function buildDailyReport(dateKey: string, sessions: Session[]): string {
+export function buildDailyReport(dateKey: string, sessions: Session[], footerNote?: string): string {
   const lines: string[] = [`# 日報 ${formatDateHeading(dateKey)}`, ''];
 
   if (sessions.length === 0) {
-    lines.push('記録された集中セッションはありません。');
+    lines.push('記録された集中セッションはありません。', '');
+  } else {
+    const first = sessions[0];
+    const last = sessions[sessions.length - 1];
+    const count = sessions.length;
+    const interrupted = sessions.filter((s) => s.interrupted).length;
+    const summary =
+      `集中 ${count}本` +
+      (interrupted > 0 ? `(うち中断 ${interrupted}本)` : '') +
+      ` / 合計 ${formatDurationJa(totalMs(sessions))}` +
+      (first && last ? ` / ${formatClock(first.startedAt)} - ${formatClock(last.endedAt)}` : '');
+    lines.push(summary, '');
+
+    lines.push('## 取り組んだこと', '');
+    for (const t of summarizeByTask(sessions)) {
+      lines.push(`- ${t.task} — ${t.count}本(${formatDurationJa(t.totalMs)})`);
+    }
     lines.push('');
-    return lines.join('\n');
+
+    lines.push('## タイムライン', '');
+    for (const s of sessions) {
+      const mark = s.interrupted ? ' ※中断' : '';
+      lines.push(`- ${formatClock(s.startedAt)}-${formatClock(s.endedAt)} ${s.task}${mark}`);
+    }
+    lines.push('');
   }
 
-  const first = sessions[0];
-  const last = sessions[sessions.length - 1];
-  const count = sessions.length;
-  const interrupted = sessions.filter((s) => s.interrupted).length;
-  const summary =
-    `集中 ${count}本` +
-    (interrupted > 0 ? `(うち中断 ${interrupted}本)` : '') +
-    ` / 合計 ${formatDurationJa(totalMs(sessions))}` +
-    (first && last ? ` / ${formatClock(first.startedAt)} - ${formatClock(last.endedAt)}` : '');
-  lines.push(summary, '');
-
-  lines.push('## 取り組んだこと', '');
-  for (const t of summarizeByTask(sessions)) {
-    lines.push(`- ${t.task} — ${t.count}本(${formatDurationJa(t.totalMs)})`);
+  if (footerNote !== undefined && footerNote !== '') {
+    lines.push('---', '', footerNote, '');
   }
-  lines.push('');
-
-  lines.push('## タイムライン', '');
-  for (const s of sessions) {
-    const mark = s.interrupted ? ' ※中断' : '';
-    lines.push(`- ${formatClock(s.startedAt)}-${formatClock(s.endedAt)} ${s.task}${mark}`);
-  }
-  lines.push('');
 
   return lines.join('\n');
 }
