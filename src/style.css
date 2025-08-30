@@ -515,6 +515,80 @@ body {
     background 0.4s var(--ease);
 }
 
+/* 最近7日のミニ棒グラフ */
+
+.trend {
+  margin-bottom: clamp(20px, 4vw, 28px);
+  padding-bottom: clamp(18px, 3vw, 24px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.trend-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.trend-streak {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  min-height: 1.1em;
+}
+
+.trend-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.trend-goal {
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.trend-bar {
+  fill: var(--accent);
+  opacity: 0.32;
+  transition:
+    opacity 0.4s var(--ease),
+    fill 0.4s var(--ease);
+}
+
+.trend-bar.met {
+  opacity: 0.92;
+}
+
+.trend-bar.today {
+  stroke: var(--bg);
+  stroke-width: 1.5;
+}
+
+.trend-zero {
+  fill: var(--rule-strong);
+}
+
+.trend-zero.today {
+  fill: var(--accent);
+}
+
+.trend-day {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
+}
+
+.trend-day.today {
+  fill: var(--accent);
+  font-weight: 700;
+}
+
 .empty {
   color: var(--text-muted);
   font-size: 0.88rem;
