@@ -30,6 +30,15 @@ import {
 import { goalProgress } from './lib/goal';
 import { isEditableTarget, resolveShortcut, type ShortcutAction } from './lib/shortcuts';
 import { buildDailyReport, formatClock, formatDurationJa, reportFilename } from './lib/report';
+import { dailyCounts, goalStreak } from './lib/history';
+
+const TREND_DAYS = 7;
+const WEEKDAY = ['日', '月', '火', '水', '木', '金', '土'] as const;
+
+function weekdayOf(dateKey: string): string {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  return WEEKDAY[new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1).getDay()] ?? '';
+}
 
 const CONFIG_KEY = 'mokumoku.config.v1';
 
@@ -174,6 +183,13 @@ const APP_HTML = `
         </div>
         <div class="goal-track"><span class="goal-fill" id="goal-fill"></span></div>
       </div>
+      <div class="trend" id="trend">
+        <div class="trend-head">
+          <span class="goal-label">最近7日</span>
+          <span class="trend-streak" id="streak"></span>
+        </div>
+        <div class="trend-chart" id="trend-chart"></div>
+      </div>
       <p class="empty" id="empty-log">完了した集中セッションがここに並びます。</p>
       <ol class="session-list" id="session-list"></ol>
       <div class="log-actions">
@@ -224,6 +240,8 @@ export function mountApp(
   const goalEl = el<HTMLDivElement>(root, '#goal');
   const goalValue = el<HTMLSpanElement>(root, '#goal-value');
   const goalFill = el<HTMLSpanElement>(root, '#goal-fill');
+  const trendChart = el<HTMLDivElement>(root, '#trend-chart');
+  const streakEl = el<HTMLSpanElement>(root, '#streak');
   const listEl = el<HTMLOListElement>(root, '#session-list');
   const emptyEl = el<HTMLParagraphElement>(root, '#empty-log');
   const reportBtn = el<HTMLButtonElement>(root, '#report');
@@ -289,6 +307,49 @@ export function mountApp(
     goalEl.classList.toggle('is-met', gp.met && gp.done > 0);
   }
 
+  function renderTrend(): void {
+    const todayKey = localDateKey(deps.now());
+    const data = dailyCounts(sessions, todayKey, TREND_DAYS);
+    const goal = config.dailyGoal;
+    const maxCount = Math.max(goal, ...data.map((d) => d.count), 1);
+    const width = 280;
+    const top = 12;
+    const base = 66;
+    const labelY = 84;
+    const slot = width / TREND_DAYS;
+    const barW = 16;
+    const scale = (count: number): number => (count / maxCount) * (base - top);
+
+    const parts: string[] = [];
+    const goalY = (base - scale(goal)).toFixed(1);
+    parts.push(`<line class="trend-goal" x1="0" y1="${goalY}" x2="${width}" y2="${goalY}" />`);
+    data.forEach((d, i) => {
+      const cx = i * slot + slot / 2;
+      const isToday = i === data.length - 1;
+      const met = d.count >= goal;
+      const title = `${d.date} 集中${d.count}本`;
+      if (d.count > 0) {
+        const h = Math.max(scale(d.count), 3);
+        const cls = `trend-bar${met ? ' met' : ''}${isToday ? ' today' : ''}`;
+        parts.push(
+          `<rect class="${cls}" x="${(cx - barW / 2).toFixed(1)}" y="${(base - h).toFixed(1)}" ` +
+            `width="${barW}" height="${h.toFixed(1)}" rx="3"><title>${title}</title></rect>`,
+        );
+      } else {
+        parts.push(
+          `<circle class="trend-zero${isToday ? ' today' : ''}" cx="${cx.toFixed(1)}" cy="${base}" r="1.6"><title>${title}</title></circle>`,
+        );
+      }
+      parts.push(
+        `<text class="trend-day${isToday ? ' today' : ''}" x="${cx.toFixed(1)}" y="${labelY}" text-anchor="middle">${weekdayOf(d.date)}</text>`,
+      );
+    });
+    trendChart.innerHTML = `<svg viewBox="0 0 ${width} 96" class="trend-svg" role="img" aria-label="最近7日の集中本数">${parts.join('')}</svg>`;
+
+    const streak = goalStreak(sessions, todayKey, goal);
+    streakEl.textContent = streak > 0 ? `連続達成 ${streak}日` : '';
+  }
+
   function renderLog(): void {
     const today = sessionsOn(sessions, localDateKey(deps.now()));
     const summaries = summarizeByTask(today);
@@ -310,6 +371,7 @@ export function mountApp(
       })
       .join('');
     renderGoal(today.length);
+    renderTrend();
   }
 
   function recordSession(endedAt: number, interrupted: boolean): void {
@@ -356,7 +418,11 @@ export function mountApp(
 
   function openReport(): void {
     const key = localDateKey(deps.now());
-    reportBody.textContent = buildDailyReport(key, sessionsOn(sessions, key));
+    const week = dailyCounts(sessions, key, TREND_DAYS);
+    const weekFocus = week.reduce((acc, d) => acc + d.count, 0);
+    const streak = goalStreak(sessions, key, config.dailyGoal);
+    const note = `直近7日: 集中 ${weekFocus}本 / 連続達成 ${streak}日`;
+    reportBody.textContent = buildDailyReport(key, sessionsOn(sessions, key), note);
     dialog.showModal();
   }
 
